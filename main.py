@@ -1,5 +1,5 @@
-from colorama import Fore, Back
 import os, sys, json, time, threading
+from colorama import Fore, Back
 from pynput import keyboard
 from pynput.keyboard import Key
 
@@ -113,19 +113,68 @@ def ui():
             elif currentMenu == "Workers":
                 if selectedOption == 1:
                     print(Fore.YELLOW)
-                    print(Back.YELLOW + Fore.BLACK + "Grandma" + Back.RESET + Fore.YELLOW)
-                    print("Factory")
-                    print("Something")
+                    print(Back.YELLOW + Fore.BLACK + "Cursor" + Back.RESET + Fore.YELLOW)
+                    print("Grandma")
+                    print("Farm")
+                    print("Mine")
                 elif selectedOption == 2:
                     print(Fore.YELLOW)
-                    print("Grandma")
-                    print(Back.YELLOW + Fore.BLACK + "Factory" + Back.RESET + Fore.YELLOW)
-                    print("Something")
+                    print("Cursor")
+                    print(Back.YELLOW + Fore.BLACK + "Grandma" + Back.RESET + Fore.YELLOW)
+                    print("Farm")
+                    print("Mine")
                 elif selectedOption == 3:
                     print(Fore.YELLOW)
+                    print("Cursor")
                     print("Grandma")
-                    print("Factory")
-                    print(Back.YELLOW + Fore.BLACK + "Something" + Back.RESET + Fore.YELLOW)
+                    print(Back.YELLOW + Fore.BLACK + "Farm" + Back.RESET + Fore.YELLOW)
+                    print("Mine")
+                elif selectedOption == 4:
+                    print(Fore.YELLOW)
+                    print("Cursor")
+                    print("Grandma")
+                    print("Farm")
+                    print(Back.YELLOW + Fore.BLACK + "Mine" + Back.RESET + Fore.YELLOW)
+            elif currentMenu == "BuyCursor":
+                try:
+                    with open("prices.json", "r") as file:
+                        prices = file.read()
+                        prices = json.loads(prices)
+                        #prices["cursor"]
+                except:
+                    if sys.platform.startswith("freebsd"):
+                        os.system("touch prices.json")
+                    elif sys.platform.startswith("linux"):
+                        os.system("touch prices.json")
+                    elif sys.platform.startswith("darwin"):
+                        os.system("touch prices.json")
+                    elif sys.platform.startswith("win32"):
+                        os.system("type nul > prices.json")
+                    else:
+                        print("Unsupported operating system, this program only works on: FreeBSD, GNU+Linux, macOS and Windows")
+                    with open("prices.json", "w") as file:
+                        file.write('{"cursor": 20}')
+                    with open("prices.json", "r") as file:
+                            prices = file.read()
+                            prices = json.loads(prices)
+                priceInt = prices["cursor"]
+                price = str(priceInt)
+                if selectedOption == 1:
+                    print("")
+                    print("A Cursor will grant you +1 cookie per second")
+                    print("A cursor will cost you 20 cookies")
+                    print(f"The price increases by 25% everytime you buy one")
+                    print("")
+                    print(Back.YELLOW + Fore.BLACK + f"Buy for {price} cookies" + Back.RESET + Fore.YELLOW)
+                    print("Cancel")
+                elif selectedOption == 2:
+                    print("")
+                    print("A Cursor will grant you +1 cookie per second")
+                    print("A cursor will cost you 20 cookies")
+                    print(f"The price increases by 25% everytime you buy one")
+                    print("")
+                    print(f"Buy for {price} cookies")
+                    print(Back.YELLOW + Fore.BLACK + "Cancel" + Back.RESET + Fore.YELLOW)
             print(Fore.RESET)
             print("")
             if currentMenu == "Main":
@@ -139,11 +188,15 @@ def navigate(key):
     if key == Key.down:
         if selectedOption == 3 and currentMenu == "Main":
             pass
+        elif selectedOption == 4 and currentMenu == "Workers":
+            pass
+        elif selectedOption == 2 and currentMenu == "BuyCursor":
+            pass
         else:
             selectedOption += 1
             refresh = True
     elif key == Key.up:
-        if selectedOption == 1 and currentMenu == "Main":
+        if selectedOption == 1:
             pass
         else:
             selectedOption -= 1
@@ -185,22 +238,122 @@ def navigate(key):
                 with open("stats.json", "w") as file:
                     file.write(statsJson)
                 refresh = True
+        elif currentMenu == "Workers":
+            if selectedOption == 1:
+                currentMenu = "BuyCursor"
+                selectedOption = 1
+                refresh = True
+        elif currentMenu == "BuyCursor":
+            if selectedOption == 1:
+                try:
+                    with open("stats.json", "r") as file:
+                        stats = file.read()
+                        stats = json.loads(stats)
+                        stats["cookies"]
+                except:
+                    if sys.platform.startswith("freebsd"):
+                        os.system("touch stats.json")
+                    elif sys.platform.startswith("linux"):
+                        os.system("touch stats.json")
+                    elif sys.platform.startswith("darwin"):
+                        os.system("touch stats.json")
+                    elif sys.platform.startswith("win32"):
+                        os.system("type nul > stats.json")
+                    else:
+                        print("Unsupported operating system, this program only works on: FreeBSD, GNU+Linux, macOS and Windows")
+                        with open("stats.json", "w") as file:
+                            file.write('{"cookies": 0, "cookiesPerSecond": 0, "cookiesPerClick": 1}')
+                        with open("stats.json", "r") as file:
+                            stats = file.read()
+                            stats = json.loads(stats)
+                try:
+                    with open("prices.json", "r") as file:
+                        prices = file.read()
+                        prices = json.loads(stats)
+                        prices["cursor"]
+                except:
+                    if sys.platform.startswith("freebsd"):
+                        os.system("touch prices.json")
+                    elif sys.platform.startswith("linux"):
+                        os.system("touch prices.json")
+                    elif sys.platform.startswith("darwin"):
+                        os.system("touch prices.json")
+                    elif sys.platform.startswith("win32"):
+                        os.system("type nul > prices.json")
+                    else:
+                        print("Unsupported operating system, this program only works on: FreeBSD, GNU+Linux, macOS and Windows")
+                    with open("prices.json", "w") as file:
+                        file.write('{"cursor": 20}')
+                    with open("prices.json", "r") as file:
+                            prices = file.read()
+                            prices = json.loads(prices)
+                stats["cookiesPerSecond"] += 1
+                prices["cursor"] = prices["cursor"] * 1.25
+                statsJson = json.dumps(stats)
+                pricesJson = json.dumps(prices)
+                with open("stats.json", "w") as file:
+                    file.write(statsJson)
+                with open("prices.json", "w") as file:
+                    file.write(pricesJson)
+                refresh = True
+
+                
+                
     elif key == Key.esc:
         if currentMenu == "Main":
-            sys.exit()
-        else:
+            os._exit(1)
+        elif currentMenu == "Workers" or currentMenu == "Upgrades":
             currentMenu = "Main"
             refresh = True
+        elif currentMenu == "BuyCursor":
+            currentMenu = "Workers"
+            refresh = True
                 
-    
+
+def addCookies():
+    global refresh
+    while True:
+        time.sleep(1)
+        try:
+            with open("stats.json", "r") as file:
+                stats = file.read()
+                stats = json.loads(stats)
+                stats["cookies"]
+        except:
+            if sys.platform.startswith("freebsd"):
+                os.system("touch stats.json")
+            elif sys.platform.startswith("linux"):
+                os.system("touch stats.json")
+            elif sys.platform.startswith("darwin"):
+                os.system("touch stats.json")
+            elif sys.platform.startswith("win32"):
+                os.system("type nul > stats.json")
+            else:
+                print("Unsupported operating system, this program only works on: FreeBSD, GNU+Linux, macOS and Windows")
+                with open("stats.json", "w") as file:
+                    file.write('{"cookies": 0, "cookiesPerSecond": 0, "cookiesPerClick": 1}')
+                with open("stats.json", "r") as file:
+                    stats = file.read()
+                    stats = json.loads(stats)
+        if stats["cookiesPerSecond"] > 0:
+            stats["cookies"] += stats["cookiesPerSecond"]
+            statsJson = json.dumps(stats)
+            with open("stats.json", "w") as file:
+                file.write(statsJson)
+            refresh = True
+
+
 def playerInput():
     with keyboard.Listener(on_release=navigate) as listener:
         listener.join()
 
 t1 = threading.Thread(target=ui)
 t2 = threading.Thread(target=playerInput)
+t3 = threading.Thread(target=addCookies)
 t1.setDaemon(True)
 t1.start()
 t2.start()
+t3.start()
 t1.join()
 t2.join()
+t3.join()
