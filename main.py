@@ -7,7 +7,7 @@ from pynput.keyboard import Key
 onCooldown = False
 waitForCooldown = False
 waitForMiniCooldown = False
-backupStats = {"cookies": 0, "cookiesPerSecond": 0, "cookiesPerClick": 1}
+backupStats = '{"cookies": 0, "cookiesPerSecond": 0, "cookiesPerClick": 1}'
 
 def buyWorker(price, increase):
     global refresh, backupStats
@@ -535,7 +535,7 @@ def addCookies():
             else:
                 print("Unsupported operating system, this program only works on: FreeBSD, GNU+Linux, macOS and Windows")
                 with open("stats.json", "w") as file:
-                    file.write('{"cookies": 0, "cookiesPerSecond": 0, "cookiesPerClick": 1}')
+                    file.write(backupStats)
                 with open("stats.json", "r") as file:
                     stats = file.read()
                     stats = json.loads(stats)
